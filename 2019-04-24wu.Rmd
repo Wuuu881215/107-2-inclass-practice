@@ -1,0 +1,113 @@
+---
+title: '2019-04-24'
+author: "吳珮丞"
+date: "4/24/2019"
+output: html_document
+---
+```{r}
+a <- matrix(c(1:6), nrow=3, ncol=2) 
+a
+```
+```{r}
+MAT2 <- matrix(c("a","b","c","d"),2,2)
+MAT2
+class(MAT2)
+typeof(MAT2)
+MAT2[[2]]
+MAT2[c(T,F,F,T)]
+MAT2[c(1,4)]
+```
+```{r}
+StuDF <- data.frame(StuID=c(1,2,3,4,5), 
+                  name=c("小明","大雄","胖虎","小新","大白"),
+                  score=c(80,60,90,70,50))
+StuDF 
+```
+
+```{r}
+class(StuDF)
+typeof(StuDF)
+```
+
+```{r}
+StuDF[[2]][[3]]
+```
+
+```{r}
+class(StuDF$name)
+```
+```{r}
+StuDF$name <- as.character(StuDF$name)
+class(StuDF$name)
+```
+```{r}
+StuList <- list(
+  學號=c(172,214,322,425,517),
+  姓名=c("小明","大雄","胖虎","小新","大白"),
+  成績=c(80,60,90,70,50)
+  )
+StuList 
+```
+
+```{r}
+as.data.frame(StuList) -> StuDF3
+
+class(StuDF3)
+StuDF3
+```
+
+```{r}
+as.data.frame(StuList,stringsAsFactors = F) -> StuDF4
+class(StuDF4)
+StuDF4
+```
+
+```{r}
+chosenLETTERS <- LETTERS[1:15]
+matObj1 <- matrix(chosenLETTERS,5,3)
+matObj1
+```
+```{r}
+chosenLETTERS[8]
+```
+```{r}
+matObj1[8]
+```
+```{r}
+matObj1[3,2] 
+```
+```{r}
+matObj1[c(F,F,TRUE,F,F),c(F,TRUE,F)]
+```
+```{r}
+LETTERS
+chosenLETTERS <- LETTERS[1:8]
+m <- matrix(chosenLETTERS,2,4)
+m
+tolower(m) # 轉成小寫
+m
+toupper(m) # 轉成大寫
+m
+```
+
+```{r}
+matObj1
+
+matObj1[[8]]
+```
+```{r}
+matObj1[c(T,F,F,T,F),c(F,T,T)]
+```
+```{r}
+library(readr)
+classSurvey <- read_csv("https://raw.githubusercontent.com/tpemartin/github-data/master/classSurvey.csv")
+```
+```{r}
+classSurvey[c(1:60),c(4,5)]
+classSurvey[,c(4,5)]
+```
+```{r}
+
+```
+
+
