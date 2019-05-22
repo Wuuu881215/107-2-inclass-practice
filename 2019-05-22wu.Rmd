@@ -1,0 +1,191 @@
+---
+title: '2019-05-22'
+author: "wu"
+date: "2019年5月22日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+### 6.2 轉UTC
+請將每個「訂單時區之下單時間」依其「訂單時區」轉成UTC時間date time class（即POSIXct class）後，存在「UTC時間」對應的位置裡。最後一行請打本題答案物件invoiceList。
+```{r ans62}
+# invoiceList 
+library(readr)
+
+invoiceList <- read_csv("https://raw.githubusercontent.com/tpemartin/github-data/master/invoiceList.csv",
+
+col_types = cols(訂單時間.以訂單時區顯示. = col_character()))
+
+names(invoiceList)[[2]] <- "訂單時區之下單時間"
+
+(invoiceList$訂單時區=="America/New_York") -> nyLogical
+
+(invoiceList$訂單時區=="Asia/Taipei") -> tpLogical
+
+
+
+invoiceList$nyLogical <- nyLogical
+
+invoiceList$tpLogical <- tpLogical
+
+
+
+library(lubridate)
+
+ymd_hms(invoiceList$`訂單時區之下單時間`[nyLogical],
+
+          tz="America/New_York") -> nyDateTime
+
+
+
+invoiceList$UTC時間[nyLogical] <-
+
+  with_tz(nyDateTime,tzone="UTC")
+
+
+
+ymd_hms(invoiceList$`訂單時區之下單時間`[tpLogical],
+
+          tz="Asia/Taipei") -> tpDateTime
+
+invoiceList$UTC時間[tpLogical] <-
+
+  with_tz(tpDateTime,tzone="UTC")
+
+
+
+invoiceList 
+```
+
+```{r}
+ymd_hms_tzChange <- function(input,fromTzone,toTzone){
+  time1 <- ymd_hms(input,tz=fromTzone)
+  answer <- with_tz(time1,tzone = toTzone)
+  return(answer)
+}
+ymd_hms_tzChange("1973-02-21 12:05:22","America/New_York","Asia/Taipei")
+```
+## 5
+執行以下程式產生台灣民國年月字串物件twDates。
+```{r data5}
+library(stringr)
+sample(99:103,15,replace = T)-> yy
+sample(1:12,replace=T)-> mm
+str_c("民國",str_pad(yy,3,"left","0"),"年",mm,"月") -> twDates
+# twDates
+```
+
+### 5.1 去除字元
+請將twDates中的"民國"及"月"都去除，並存在twDates2答案物件，如："民國099年2月"會變成"099年2"。
+```{r ans51}
+# twDates2
+str_replace(twDates,"民國","") -> twDates2
+str_replace(twDates2,"月","") -> twDates2  
+twDates2
+
+```
+
+### 5.2 取出年份
+取出民國年的並加上1911年轉成西元年，將此年份存在答案物件westYears裡（class為integer）。(hint: `str_split()`可分割字串,再使用第3題取出你要的部份)
+```{r ans52}
+# westYears
+library(purrr)
+str_split(twDates2,"年") -> dateList
+map(dateList,~.[[1]]) -> yy
+as.integer(yy)+1911 -> westYears
+
+westYears
+```
+
+### 5.3 西元年月日
+將twDates民國年月轉成date class的西元年月日，原始資料沒有日，請設定成每月1日。例如："民國100年5月"會轉成2011-05-01的date class日期。答案請存westDates答案物件。
+
+```{r ans53}
+# westDates
+map(dateList,~.[[2]]) -> mm
+str_c(westYears,mm,"1",sep="-") -> ymdString
+ymd(ymdString) -> westDates
+
+westDates
+```
+```{r}
+yyyy<-as.integer(str_extract(twDates,"(?<=(民國))[:digit:]+"))+1911
+mm<-str_extract(twDates,"[:digit:]+(?=月)")
+yyyymmdd <- ymd(str_c(yyyy,mm,"01",sep="-"))
+yyyymmdd
+```
+```{r}
+date_convert_twYM <- function(twDates){
+  #twDates
+  yyyy<-as.integer(str_extract(twDates,"(?<=(民國))[:digit:]+"))+1911
+  mm<-str_extract(twDates,"[:digit:]+(?=月)")
+  yyyymmdd <- ymd(str_c(yyyy,mm,"01",sep="-"))
+  return(yyyymmdd)
+}
+```
+
+```{r}
+
+sample(99:103,15,replace = T)-> yy
+
+sample(1:12,15,replace=T)-> mm
+
+str_c("民國",str_pad(yy,3,"left","0"),"年",mm,"月") -> twDates_New
+
+twDates_New
+
+date_convert_twYM(twDates_New)
+
+```
+
+```{r}
+date_convert_twYM <- function(twDates,dd="01"){
+  yyyy<-as.integer(str_extract(twDates,"(?<=(民國))[:digit:]+"))+1911
+  mm<-str_extract(twDates,"[:digit:]+(?=月)")
+  yyyymmdd <- ymd(str_c(yyyy,mm,dd,sep="-"))
+  yyyymmdd
+}
+```
+```{r}
+
+sample(99:103,15,replace = T)-> yy
+
+sample(1:12,15,replace=T)-> mm
+
+str_c("民國",str_pad(yy,3,"left","0"),"年",mm,"月") -> twDates_New
+
+
+
+twDates_New
+
+date_convert_twYM(twDates_New)
+
+date_convert_twYM(twDates_New,dd="04")
+
+```
+
+
+
